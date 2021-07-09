@@ -16,10 +16,12 @@ import java.util.concurrent.ScheduledExecutorService;
 
 
 public class Main extends ListenerAdapter{
+    static Secret key = new Secret();
     private static DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
     private static ScheduledExecutorService threadPool = Executors.newSingleThreadScheduledExecutor();
     private static LocalDateTime now = LocalDateTime.now();
-    public static JDABuilder jdabuilder = JDABuilder.createDefault(getDiscordKey()).addEventListeners(new Main());
+
+    public static JDABuilder jdabuilder = JDABuilder.createDefault(key.secret).addEventListeners(new Main());
     public static JDA jda;
     public static BotTool bottool = new BotTool();
     public static void main(String args[]) {
