@@ -4,6 +4,7 @@ import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
+import com.sedmelluq.discord.lavaplayer.source.local.LocalAudioSourceManager;
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
@@ -93,6 +94,10 @@ public class Music  extends ListenerAdapter {
                 e.printStackTrace();
             }
         }
+        else if("!testcommand".equals(command[0])){
+            loadAndPlay(event.getChannel(), "towa.mp3",true);
+
+        }
 
 
         else if ("!leave".equals(command[0]))
@@ -149,14 +154,17 @@ public class Music  extends ListenerAdapter {
             }
         }
         else if(command[0].equals("!holomusic")){
+            final File dir = new File("music");
+            File[] files = dir.listFiles();
+            Random rand = new Random();
             fillHololiveMusic();
             Collections.shuffle(hololiveMusicURL);
             int songsToQueue = Integer.parseInt(command[1]);
             System.out.println("Requesting to queue " + command[1] + " songs");
-            System.out.println("Queueing all Hololive Music");
             event.getChannel().sendMessage("Queueing " + command[1] + " Hololive songs").queue();
             for (int i = 0;i<songsToQueue;i++){
-                loadAndPlay(event.getChannel(), hololiveMusicURL.get(i),false);
+                File file = files[rand.nextInt(files.length)];
+                loadAndPlay(event.getChannel(), file.getAbsoluteFile().toString(),false);
             }
 
 
@@ -237,7 +245,6 @@ public class Music  extends ListenerAdapter {
             public void trackLoaded(AudioTrack track) {
                 if(returnMessage) {
                     channel.sendMessage("Adding to queue " + track.getInfo().title).queue();
-
                 }
 
                 play(channel.getGuild(), musicManager, track);
@@ -267,6 +274,7 @@ public class Music  extends ListenerAdapter {
             public void loadFailed(FriendlyException exception) {
                 if(returnMessage) {
                     channel.sendMessage("Could not play: " + exception.getMessage()).queue();
+                    exception.printStackTrace();
                 }
             }
         });
